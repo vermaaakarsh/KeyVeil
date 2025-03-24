@@ -20,17 +20,14 @@ import { toast } from "sonner";
 import FormField from "./FormField";
 import { useRouter } from "next/navigation";
 
-type FormType = "sign-in" | "sign-up";
-
-const checkPasswordValidation = (
-  password: string,
-  name: string | undefined
-): boolean => {
+const checkPasswordValidation = (): // password: string,
+// name: string | undefined
+boolean => {
   // TODO: Implement proper validation
   return true;
 };
 
-const authFormSchema = (type: FormType) => {
+const authFormSchema = (type: TForm) => {
   return z
     .object({
       name: type === "sign-up" ? z.string().min(3) : z.string().optional(),
@@ -45,21 +42,24 @@ const authFormSchema = (type: FormType) => {
         type === "sign-up" ? z.string().min(12) : z.string().optional(),
     })
     .refine(
-      (data) => {
-        return checkPasswordValidation(data.password, data.name);
+      () => {
+        return checkPasswordValidation();
       },
       {
         message: "Password does not passes the checks. ",
         path: ["password"],
       }
     )
-    .refine((data) => data.confirmPassword === data.password, {
-      message: "Passwords do not match.",
-      path: ["confirmPassword"],
-    });
+    .refine(
+      (data) => !data.confirmPassword || data.confirmPassword === data.password,
+      {
+        message: "Passwords do not match.",
+        path: ["confirmPassword"],
+      }
+    );
 };
 
-const AuthForm = ({ type }: { type: FormType }) => {
+const AuthForm = ({ type }: { type: TForm }) => {
   const router = useRouter();
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -72,14 +72,45 @@ const AuthForm = ({ type }: { type: FormType }) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (type === "sign-up") {
-        toast.success("Account created successfully! Please sign in.");
-        router.push("/sign-in");
+        const response = await fetch("/api/sign-up", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: values.name,
+            email: values.email,
+            password: values.password,
+          }),
+        });
+        const { status, message }: ICustomResponse = await response.json();
+        if (status === "success") {
+          toast.success(message);
+          router.push("/sign-in");
+        } else {
+          toast.error(message);
+        }
       } else {
-        toast.success("Signing In!");
-        router.push("/");
+        const response = await fetch("/api/sign-in", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+          }),
+        });
+        const { status, message }: ICustomResponse = await response.json();
+        if (status === "success") {
+          toast.success(message);
+          router.push("/");
+        } else {
+          toast.error(message);
+        }
       }
     } catch (error) {
       console.log(error);
