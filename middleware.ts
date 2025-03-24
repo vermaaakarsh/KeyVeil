@@ -15,10 +15,6 @@ export default async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("Content-Type", "application/json");
 
-  if (token) {
-    requestHeaders.set("Authorization", `Bearer ${token}`);
-  }
-
   if (isProtectedRoute && !token) {
     return NextResponse.redirect(new URL("/sign-in", request.nextUrl));
   }

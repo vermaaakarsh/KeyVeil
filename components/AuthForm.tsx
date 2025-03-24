@@ -77,9 +77,6 @@ const AuthForm = ({ type }: { type: TForm }) => {
       if (type === "sign-up") {
         const response = await fetch("/api/sign-up", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify({
             name: values.name,
             email: values.email,
@@ -96,9 +93,6 @@ const AuthForm = ({ type }: { type: TForm }) => {
       } else {
         const response = await fetch("/api/sign-in", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify({
             email: values.email,
             password: values.password,

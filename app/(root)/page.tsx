@@ -1,3 +1,7 @@
 export default function Home() {
-  return <div className="flex text-3xl">Welcome to KeyViel</div>;
+  return (
+    <div className="flex">
+      <section></section>
+    </div>
+  );
 }

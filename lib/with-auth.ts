@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
 export function withAuth(handler: Handler): Handler {
   return async (req, context) => {
-    const headersList = await headers();
-    const authHeader = headersList.get("Authorization");
-    const token = authHeader?.split(" ")[1];
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
     if (!token) {
       return new Response(JSON.stringify({ error: "Not Authenticated!" }), {
         status: 401,
