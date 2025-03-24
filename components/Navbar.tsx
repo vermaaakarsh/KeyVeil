@@ -15,8 +15,9 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import ConfirmationBox from "./ConfirmationBox";
+import { TUser } from "@/types/TUser";
 
-const Navbar = () => {
+const Navbar = ({ user }: { user: TUser }) => {
   const router = useRouter();
   const { setTheme } = useTheme();
 
@@ -35,10 +36,12 @@ const Navbar = () => {
 
   return (
     <nav className="flex justify-between items-center px-4 h-16 bg-background text-foreground">
-      <span className="font-bold text-xl">KeyVeil</span>
-      <div className="flex gap-2 justify-center items-center">
+      <span className="pl-2 font-bold text-3xl">KeyVeil</span>
+      <div className="flex gap-1.5 justify-center items-center">
         <Avatar>
-          <AvatarFallback>AV</AvatarFallback>
+          <AvatarFallback>
+            {user.name.split(" ")[0][0] + user.name.split(" ").slice(-1)[0][0]}
+          </AvatarFallback>
         </Avatar>
         <ConfirmationBox
           title="Are you sure you want to log out?"

@@ -6,6 +6,7 @@ import { withAuth } from "@/lib/with-auth";
 
 const handler = async () => {
   try {
+    await connectDb();
     const cookieStore = await cookies();
     cookieStore.delete("token");
     return NextResponse.json({
@@ -23,4 +24,4 @@ const handler = async () => {
   }
 };
 
-export const GET = withAuth(connectDb(handler));
+export const GET = withAuth(handler);

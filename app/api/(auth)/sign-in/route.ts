@@ -8,6 +8,7 @@ import connectDb from "@/lib/mongoose";
 
 const handler = async (request: NextRequest) => {
   try {
+    await connectDb();
     const cookieStore = await cookies();
     const userData = await request.json();
     const user = await User.findOne({ email: userData.email });
@@ -53,4 +54,4 @@ const handler = async (request: NextRequest) => {
   }
 };
 
-export const POST = connectDb(handler);
+export const POST = handler;

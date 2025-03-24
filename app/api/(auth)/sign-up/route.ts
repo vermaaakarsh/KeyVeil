@@ -6,6 +6,8 @@ import connectDb from "@/lib/mongoose";
 
 const handler = async (request: Request) => {
   try {
+    await connectDb();
+
     const userObject = await request.json();
     const encryptedPassword = await bcrypt.hash(userObject.password, 12);
     const user = new User({
@@ -29,4 +31,4 @@ const handler = async (request: Request) => {
   }
 };
 
-export const POST = connectDb(handler);
+export const POST = handler;
