@@ -7,13 +7,18 @@ const schema = mongoose.Schema;
 const passwordSchema = new schema(
   {
     userId: {
-      type: mongoose.Types.ObjectId,
+      type: schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     name: {
       type: String,
       required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
     },
     url: {
       type: String,
@@ -26,6 +31,10 @@ const passwordSchema = new schema(
     category: {
       type: String,
       enum: CATEGORY_ENUM,
+      required: true,
+    },
+    passwordLastUpdated: {
+      type: Date,
       required: true,
     },
     isActive: {
@@ -41,7 +50,7 @@ const passwordSchema = new schema(
 );
 
 const Password =
-  mongoose.models.Password ??
+  mongoose.models?.Password ??
   mongoose.model<TPassword>("Password", passwordSchema);
 
 export default Password;

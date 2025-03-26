@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import User from "@/models/user";
 import connectDb from "@/lib/mongoose";
 
-const handler = async (request: Request) => {
+const handler = async (request: NextRequest) => {
   try {
     await connectDb();
 
