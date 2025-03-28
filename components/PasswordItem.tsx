@@ -66,7 +66,7 @@ const PasswordItem = ({
           </Tooltip>
         </TooltipProvider>
       </CardHeader>
-      <CardContent className="flex flex-col md:flex-row lg:flex-row text-sm justify-between  mt-[-4]">
+      <CardContent className="flex flex-col gap-1 md:flex-row lg:flex-row text-sm justify-between  mt-[-4]">
         <div className="text-muted-foreground">{passwordData.category}</div>
         <div>
           Updated{" "}

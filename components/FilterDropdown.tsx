@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,10 +9,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CATEGORY_ENUM } from "@/lib/enums";
 
-const FilterDropdown = () => {
-  const [selectedCategory, setSelectedCategory] =
-    useState<CATEGORY_ENUM | null>();
-
+const FilterDropdown = ({
+  selectedCategory,
+  setSelectedCategory,
+}: {
+  selectedCategory: CATEGORY_ENUM | null;
+  setSelectedCategory: (value: CATEGORY_ENUM | null) => void;
+}) => {
   return (
     <div className="w-32">
       <DropdownMenu>
