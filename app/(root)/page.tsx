@@ -1,23 +1,21 @@
-import dynamic from "next/dynamic";
+import Passwords from "@/components/Passwords";
+import { cookies } from "next/headers";
+import { getUserDetails, getUserPasswords } from "@/lib/actions";
+import Navbar from "@/components/Navbar";
 
-import AddPassword from "@/components/AddPassword";
-import FilterDropdown from "@/components/FilterDropdown";
-import SearchBar from "@/components/SearchBar";
+export default async function Home() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const { userId } = JSON.parse(atob(token!.split(".")[1]));
+  const user = JSON.parse(JSON.stringify(await getUserDetails(userId)));
+  const { passwords, totalPages } = JSON.parse(
+    JSON.stringify(await getUserPasswords(userId))
+  );
 
-const Passwords = dynamic(() => import("@/components/Passwords"));
-
-export default function Home() {
   return (
-    <div className="flex flex-col m-6">
-      <section className="flex flex-col md:flex-row lg:flex-row justify-center items-center w-full gap-4 ">
-        <SearchBar />
-        <FilterDropdown />
-        <AddPassword />
-      </section>
-      <section className="mt-10 ml-6.5 mr-6.5">
-        <Passwords />
-      </section>
-      <section className=""></section>
+    <div>
+      <Navbar user={user} />
+      <Passwords initialPasswords={passwords} initialTotalPages={totalPages} />
     </div>
   );
 }
