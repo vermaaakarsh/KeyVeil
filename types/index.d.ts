@@ -8,7 +8,7 @@ declare global {
     message: string;
     data: any;
   }
-  type TForm = "sign-in" | "sign-up";
+  type TAuthForm = "sign-in" | "sign-up";
   type TStatus = "success" | "error";
   type Handler = (req: NextRequest, context?: any) => Promise<Response>;
 }

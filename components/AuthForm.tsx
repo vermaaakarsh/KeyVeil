@@ -27,7 +27,7 @@ boolean => {
   return true;
 };
 
-const authFormSchema = (type: TForm) => {
+const authFormSchema = (type: TAuthForm) => {
   return z
     .object({
       name: type === "sign-up" ? z.string().min(3) : z.string().optional(),
@@ -59,7 +59,7 @@ const authFormSchema = (type: TForm) => {
     );
 };
 
-const AuthForm = ({ type }: { type: TForm }) => {
+const AuthForm = ({ type }: { type: TAuthForm }) => {
   const router = useRouter();
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -86,6 +86,7 @@ const AuthForm = ({ type }: { type: TForm }) => {
         const { status, message }: ICustomResponse = await response.json();
         if (status === "success") {
           toast.success(message);
+          form.reset();
           router.push("/sign-in");
         } else {
           toast.error(message);
@@ -101,6 +102,7 @@ const AuthForm = ({ type }: { type: TForm }) => {
         const { status, message }: ICustomResponse = await response.json();
         if (status === "success") {
           toast.success(message);
+          form.reset();
           router.push("/");
         } else {
           toast.error(message);
@@ -149,6 +151,7 @@ const AuthForm = ({ type }: { type: TForm }) => {
                 label="Password"
                 placeholder="Enter your password"
                 type="password"
+                showPasswordToggle
                 infoBox={
                   !isSignIn && (
                     <p>

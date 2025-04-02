@@ -72,7 +72,7 @@ const Passwords = ({
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
         />
-        <AddPassword />
+        <AddPassword fetchPasswords={fetchPasswords} />
       </section>
       <section className="mt-10 ml-6.5 mr-6.5">
         <div className="flex flex-col md:flex-row lg:flex-row justify-center items-center md:items-baseline lg:items-baseline gap-6">
@@ -121,7 +121,6 @@ const Passwords = ({
                 <CardTitle className="flex justify-center items-center text-center">
                   No Password Added!
                 </CardTitle>
-                <CardDescription></CardDescription>
                 <CardDescription className="flex justify-center items-center mt-4">
                   <div className="text-center">
                     Start adding your credentials to manage them securely.

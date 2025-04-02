@@ -18,7 +18,6 @@ const passwordSchema = new schema(
     username: {
       type: String,
       required: true,
-      unique: true,
     },
     url: {
       type: String,

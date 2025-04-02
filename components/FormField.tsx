@@ -1,9 +1,11 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { FormControl, FormItem, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Eye, EyeOff } from "lucide-react";
 import InfoComponent from "./InfoComponent";
 
 interface FormFieldProps<T extends FieldValues> {
@@ -14,9 +16,10 @@ interface FormFieldProps<T extends FieldValues> {
   type?: "text" | "email" | "password";
   infoBox?: ReactNode;
   required?: boolean;
+  showPasswordToggle?: boolean;
 }
 
-const FormField = ({
+const FormField = <T extends FieldValues>({
   control,
   name,
   label,
@@ -24,29 +27,45 @@ const FormField = ({
   type = "text",
   infoBox,
   required = true,
+  showPasswordToggle = false,
 }: FormFieldProps<T>) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <Controller
       name={name}
       control={control}
       render={({ field }) => (
         <FormItem>
-          {infoBox ? (
-            <div className="flex flex-row gap-1">
-              <FormLabel className="label">{label}</FormLabel>
-              <InfoComponent>{infoBox}</InfoComponent>
-            </div>
-          ) : (
-            <FormLabel className="label">{label}</FormLabel>
-          )}
-
+          <div className="flex items-center justify-between">
+            <FormLabel>{label}</FormLabel>
+            {infoBox && <InfoComponent>{infoBox}</InfoComponent>}
+          </div>
           <FormControl>
-            <Input
-              placeholder={placeholder}
-              {...field}
-              type={type}
-              required={required}
-            />
+            <div className="relative">
+              <Input
+                placeholder={placeholder}
+                {...field}
+                type={showPasswordToggle && showPassword ? "text" : type}
+                required={required}
+                className={showPasswordToggle ? "pr-10" : ""}
+              />
+              {showPasswordToggle && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </Button>
+              )}
+            </div>
           </FormControl>
           <FormMessage />
         </FormItem>
