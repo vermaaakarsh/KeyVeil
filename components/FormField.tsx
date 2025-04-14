@@ -35,7 +35,7 @@ const FormField = <T extends FieldValues>({
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <FormItem>
           <div className="flex items-center justify-between">
             <FormLabel>{label}</FormLabel>
@@ -67,6 +67,7 @@ const FormField = <T extends FieldValues>({
               )}
             </div>
           </FormControl>
+          <FormMessage>{fieldState.error?.message}</FormMessage>
           <FormMessage />
         </FormItem>
       )}

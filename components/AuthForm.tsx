@@ -85,9 +85,9 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
         });
         const { status, message }: ICustomResponse = await response.json();
         if (status === "success") {
-          toast.success(message);
           form.reset();
           router.push("/sign-in");
+          toast.success(message);
         } else {
           toast.error(message);
         }
@@ -101,9 +101,9 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
         });
         const { status, message }: ICustomResponse = await response.json();
         if (status === "success") {
-          toast.success(message);
           form.reset();
           router.push("/");
+          toast.success(message);
         } else {
           toast.error(message);
         }
