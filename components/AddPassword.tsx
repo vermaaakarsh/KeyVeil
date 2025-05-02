@@ -50,9 +50,14 @@ const addPasswordFormSchema = () => {
     );
 };
 
-const AddPassword = ({ fetchPasswords }: { fetchPasswords: () => void }) => {
+const AddPassword = ({
+  fetchPasswords,
+  masterPassword,
+}: {
+  fetchPasswords: () => void;
+  masterPassword: string;
+}) => {
   const [open, setOpen] = useState(false);
-  const [masterPassword, setMasterPassword] = useState("");
   const [showMasterPassword, setShowMasterPassword] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState(
@@ -73,24 +78,6 @@ const AddPassword = ({ fetchPasswords }: { fetchPasswords: () => void }) => {
 
   const handleCategoryChange = (value: keyof typeof CATEGORY_ENUM) => {
     setSelectedCategory(CATEGORY_ENUM[value]);
-  };
-
-  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let file;
-    if (event.target.files) {
-      file = event.target.files[0];
-    }
-    if (!file) {
-      return;
-    }
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const text = (reader.result as string).trim();
-      setMasterPassword(text);
-    };
-
-    reader.readAsText(file);
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -115,7 +102,6 @@ const AddPassword = ({ fetchPasswords }: { fetchPasswords: () => void }) => {
       if (status === "success") {
         toast.success(message);
         form.reset();
-        setMasterPassword("");
         setOpen(false);
         fetchPasswords();
       } else {
@@ -204,9 +190,7 @@ const AddPassword = ({ fetchPasswords }: { fetchPasswords: () => void }) => {
                       type={showMasterPassword ? "text" : "password"}
                       required
                       autoComplete={"new-password"}
-                      onChange={(e) => {
-                        setMasterPassword(e.target.value);
-                      }}
+                      disabled
                     />
                     <Button
                       type="button"
@@ -222,15 +206,6 @@ const AddPassword = ({ fetchPasswords }: { fetchPasswords: () => void }) => {
                       )}
                     </Button>
                   </div>
-                  <span className="flex justify-center items-center">OR</span>
-                  <Input
-                    name="masterPasswordFile"
-                    placeholder="Upload the master password file"
-                    type="file"
-                    accept=".txt"
-                    className="h-15 cursor-pointer"
-                    onChange={onFileChange}
-                  />
                 </div>
               </div>
               <DialogFooter>

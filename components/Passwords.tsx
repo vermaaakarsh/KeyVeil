@@ -207,7 +207,12 @@ const Passwords = ({
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
         />
-        {!vaultLocked && <AddPassword fetchPasswords={fetchPasswords} />}
+        {!vaultLocked && (
+          <AddPassword
+            fetchPasswords={fetchPasswords}
+            masterPassword={masterPassword}
+          />
+        )}
       </section>
 
       <section className="mt-5 ml-6.5 mr-6.5">
