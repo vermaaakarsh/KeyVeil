@@ -21,19 +21,9 @@ import { exportPassword, generateRandomUniquePassword } from "@/lib/password";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const masterPasswordFormSchema = () => {
-  return z
-    .object({
-      masterPassword: z.string().min(12),
-    })
-    .refine(
-      () => {
-        return checkPasswordValidation();
-      },
-      {
-        message: "Password does not passes the checks. ",
-        path: ["masterPassword"],
-      }
-    );
+  return z.object({
+    masterPassword: z.string().min(16),
+  });
 };
 
 const GenerateMasterPassword = () => {
@@ -72,9 +62,9 @@ const GenerateMasterPassword = () => {
       });
       const { status, message }: ICustomResponse = await response.json();
       if (status === "success") {
-        form.reset();
-        router.push("/sign-in");
         toast.success(message);
+        router.push("/sign-in");
+        form.reset();
       } else {
         toast.error(message);
       }
@@ -108,10 +98,10 @@ const GenerateMasterPassword = () => {
                   <FormField
                     control={form.control}
                     name="masterPassword"
-                    label="Master Password"
-                    placeholder="Enter your own master password or generate one"
+                    label=""
                     type="password"
                     showPasswordToggle
+                    disabled
                   />
                 </div>
                 <Button variant="outline" onClick={generateRandomPassword}>

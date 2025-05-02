@@ -17,6 +17,7 @@ interface FormFieldProps<T extends FieldValues> {
   infoBox?: ReactNode;
   required?: boolean;
   showPasswordToggle?: boolean;
+  disabled?: boolean;
 }
 
 const FormField = <T extends FieldValues>({
@@ -28,6 +29,7 @@ const FormField = <T extends FieldValues>({
   infoBox,
   required = true,
   showPasswordToggle = false,
+  disabled = false,
 }: FormFieldProps<T>) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,7 +39,7 @@ const FormField = <T extends FieldValues>({
       control={control}
       render={({ field, fieldState }) => (
         <FormItem>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
             <FormLabel>{label}</FormLabel>
             {infoBox && <InfoComponent>{infoBox}</InfoComponent>}
           </div>
@@ -56,6 +58,7 @@ const FormField = <T extends FieldValues>({
                     ? "off"
                     : "on"
                 }
+                disabled={disabled}
               />
               {showPasswordToggle && (
                 <Button
