@@ -15,20 +15,28 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { TEncryptedDataObject } from "@/services/cryptography/ICryptography";
+import { decryptPassword } from "@/lib/password";
 
 const PasswordItem = ({
   passwordData,
+  vaultLocked,
+  masterPassword,
 }: {
   passwordData: {
     name: string;
     username: string;
     url: string;
+    password: TEncryptedDataObject;
     category: string;
     passwordLastUpdated: Date;
   };
+  vaultLocked: boolean;
+  masterPassword: string;
 }) => {
   const [daysAgo, setDaysAgo] = useState(0);
   const [textColor, setTextColor] = useState("text-muted-foreground");
+  const [passwordDisplay, setPasswordDisplay] = useState("*****************");
   const calculateDifference = () => {
     const timeDifference = Math.ceil(
       (new Date().getTime() -
@@ -44,6 +52,19 @@ const PasswordItem = ({
     setDaysAgo(timeDifference > 0 ? timeDifference : 0);
   };
 
+  const handlePasswordDisplay = async () => {
+    if (vaultLocked) {
+      setPasswordDisplay("*****************");
+    } else {
+      const temp = await decryptPassword(passwordData.password, masterPassword);
+      setPasswordDisplay(temp);
+    }
+  };
+
+  useEffect(() => {
+    handlePasswordDisplay();
+  }, [vaultLocked]);
+
   useEffect(() => {
     calculateDifference();
   }, []);
@@ -53,9 +74,6 @@ const PasswordItem = ({
       <CardHeader>
         <CardTitle>{passwordData.name}</CardTitle>
         <TooltipProvider>
-          <CardDescription className="text-primary font-bold">
-            {passwordData.username}
-          </CardDescription>
           <Tooltip>
             <TooltipTrigger asChild>
               <CardDescription className="truncate">
@@ -65,6 +83,12 @@ const PasswordItem = ({
             <TooltipContent>{passwordData.url}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
+        <CardDescription className="text-primary font-bold mt-4">
+          {passwordData.username}
+        </CardDescription>
+        <CardDescription className="text-primary font-bold">
+          {passwordDisplay}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-1 md:flex-row lg:flex-row text-sm justify-between  mt-[-4]">
         <div className="text-muted-foreground">{passwordData.category}</div>

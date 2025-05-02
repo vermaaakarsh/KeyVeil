@@ -12,6 +12,15 @@ import SearchBar from "./SearchBar";
 import FilterDropdown from "./FilterDropdown";
 import AddPassword from "./AddPassword";
 import { CATEGORY_ENUM } from "@/lib/enums";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Eye, EyeOff } from "lucide-react";
 
 const Passwords = ({
   initialPasswords,
@@ -29,11 +38,39 @@ const Passwords = ({
   const [searchBarValue, setSearchBarValue] = useState<string>("");
   const [selectedCategory, setSelectedCategory] =
     useState<CATEGORY_ENUM | null>(null);
+  const [open, setOpen] = useState(false);
+  const [masterPassword, setMasterPassword] = useState("");
+  const [showMasterPassword, setShowMasterPassword] = useState(false);
+  const [vaultLocked, setVaultLocked] = useState(true);
 
   const pageChangeHandler = (newPage: number) => {
     if (currentPage != newPage) {
       setCurrentPage(newPage);
     }
+  };
+
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let file;
+    if (event.target.files) {
+      file = event.target.files[0];
+    }
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const text = (reader.result as string).trim();
+      setMasterPassword(text);
+    };
+
+    reader.readAsText(file);
+  };
+
+  const handleVaultUnlock = () => {
+    setVaultLocked(false);
+    setOpen(false);
+    setShowMasterPassword(false);
   };
 
   const fetchPasswords = async () => {
@@ -74,6 +111,80 @@ const Passwords = ({
         />
         <AddPassword fetchPasswords={fetchPasswords} />
       </section>
+      <section className="flex justify-center items-center mt-5">
+        <Dialog open={open} onOpenChange={setOpen}>
+          <Button
+            variant="default"
+            onClick={() => {
+              if (vaultLocked) {
+                setOpen(true);
+              } else {
+                setVaultLocked(true);
+                setMasterPassword("");
+              }
+            }}
+          >
+            {vaultLocked ? "Unlock Vault" : "Lock Vault"}
+          </Button>
+          <DialogContent className="mlr-15 backdrop-blur-sm">
+            <DialogHeader>
+              <DialogTitle>Enter your Master Password</DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col gap-1 mt-4 mb-2">
+              <div className="relative">
+                <Input
+                  name="masterPassword"
+                  placeholder="Enter your master password"
+                  value={masterPassword}
+                  type={showMasterPassword ? "text" : "password"}
+                  required
+                  autoComplete={"new-password"}
+                  onChange={(e) => {
+                    setMasterPassword(e.target.value);
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  onClick={() => setShowMasterPassword((prev) => !prev)}
+                >
+                  {showMasterPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </Button>
+              </div>
+              <span className="flex justify-center items-center">OR</span>
+              <Input
+                name="masterPasswordFile"
+                placeholder="Upload the master password file"
+                type="file"
+                accept=".txt"
+                className="h-15 cursor-pointer"
+                onChange={onFileChange}
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setOpen(false);
+                  setMasterPassword("");
+                  setShowMasterPassword(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button variant="default" onClick={handleVaultUnlock}>
+                Confirm
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </section>
       <section className="mt-10 ml-6.5 mr-6.5">
         <div className="flex flex-col md:flex-row lg:flex-row justify-center items-center md:items-baseline lg:items-baseline gap-6">
           <Pagination
@@ -106,13 +217,9 @@ const Passwords = ({
             passwords.map((passwordData) => (
               <PasswordItem
                 key={passwordData._id + passwordData.name}
-                passwordData={{
-                  name: passwordData.name,
-                  username: passwordData.username,
-                  url: passwordData.url,
-                  category: passwordData.category,
-                  passwordLastUpdated: passwordData.passwordLastUpdated,
-                }}
+                passwordData={passwordData}
+                vaultLocked={vaultLocked}
+                masterPassword={masterPassword}
               />
             ))
           ) : (

@@ -49,6 +49,13 @@ const FormField = <T extends FieldValues>({
                 type={showPasswordToggle && showPassword ? "text" : type}
                 required={required}
                 className={showPasswordToggle ? "pr-10" : ""}
+                autoComplete={
+                  showPasswordToggle
+                    ? "new-password"
+                    : name === "username"
+                    ? "off"
+                    : "on"
+                }
               />
               {showPasswordToggle && (
                 <Button
