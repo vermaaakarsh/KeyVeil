@@ -5,7 +5,7 @@ import connectDb from "@/lib/mongoose";
 import { withAuth } from "@/lib/with-auth";
 import Password from "@/models/password";
 
-const handler = async (request: NextRequest) => {
+const addPassword = async (request: NextRequest) => {
   try {
     await connectDb();
     const userId = request.userId as unknown as Types.ObjectId;
@@ -37,4 +37,4 @@ const handler = async (request: NextRequest) => {
   }
 };
 
-export const POST = withAuth(handler);
+export const POST = withAuth(addPassword);

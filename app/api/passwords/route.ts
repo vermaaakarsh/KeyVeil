@@ -5,7 +5,7 @@ import { withAuth } from "@/lib/with-auth";
 import Password from "@/models/password";
 import { CATEGORY_ENUM } from "@/lib/enums";
 
-const handler = async (request: NextRequest) => {
+const getPasswords = async (request: NextRequest) => {
   try {
     await connectDb();
     const maxRecordsPerPage: number = <number>(
@@ -62,4 +62,4 @@ const handler = async (request: NextRequest) => {
   }
 };
 
-export const GET = withAuth(handler);
+export const GET = withAuth(getPasswords);

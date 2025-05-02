@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import connectDb from "@/lib/mongoose";
 import { withAuth } from "@/lib/with-auth";
 
-const handler = async () => {
+const logoutUser = async () => {
   try {
     await connectDb();
     const cookieStore = await cookies();
@@ -24,4 +24,4 @@ const handler = async () => {
   }
 };
 
-export const GET = withAuth(handler);
+export const GET = withAuth(logoutUser);

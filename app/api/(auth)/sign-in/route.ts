@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import User from "@/models/user";
 import connectDb from "@/lib/mongoose";
 
-const handler = async (request: NextRequest) => {
+const signInUser = async (request: NextRequest) => {
   try {
     await connectDb();
     const cookieStore = await cookies();
@@ -54,4 +54,4 @@ const handler = async (request: NextRequest) => {
   }
 };
 
-export const POST = handler;
+export const POST = signInUser;

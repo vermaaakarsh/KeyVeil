@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import User from "@/models/user";
 import connectDb from "@/lib/mongoose";
 
-const handler = async (request: NextRequest) => {
+const signUpUser = async (request: NextRequest) => {
   try {
     await connectDb();
 
@@ -31,4 +31,4 @@ const handler = async (request: NextRequest) => {
   }
 };
 
-export const POST = handler;
+export const POST = signUpUser;

@@ -7,7 +7,7 @@ import { withAuth } from "@/lib/with-auth";
 import User from "@/models/user";
 import { cookies } from "next/headers";
 
-const handler = async (request: NextRequest) => {
+const changeUserPassword = async (request: NextRequest) => {
   try {
     await connectDb();
     const userId = request.userId as unknown as Types.ObjectId;
@@ -45,4 +45,4 @@ const handler = async (request: NextRequest) => {
   }
 };
 
-export const PUT = withAuth(handler);
+export const PUT = withAuth(changeUserPassword);
