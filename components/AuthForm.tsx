@@ -20,6 +20,8 @@ import { toast } from "sonner";
 import FormField from "./FormField";
 import { useRouter } from "next/navigation";
 import { checkPasswordValidation } from "@/lib/utils";
+import useLogo from "./customHooks/useLogo";
+import Image from "next/image";
 
 const authFormSchema = (type: TAuthForm) => {
   return z
@@ -55,6 +57,8 @@ const authFormSchema = (type: TAuthForm) => {
 
 const AuthForm = ({ type }: { type: TAuthForm }) => {
   const router = useRouter();
+  const { keyVeilLogo } = useLogo();
+
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -101,10 +105,12 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
     <div className="flex justify-center mt-16">
       <Card className="lg:w-[566px]">
         <CardHeader>
-          <CardTitle className="flex justify-center">
-            Key<span className="text-primary">Veil</span>
+          <CardTitle className="flex justify-center items-center">
+            <span className="">
+              <Image src={keyVeilLogo} alt="KeyVeil" width={250} />
+            </span>
           </CardTitle>
-          <CardDescription className="flex justify-center">
+          <CardDescription className="flex justify-center items-center">
             {isSignIn
               ? "Welcome back! Sign in to you account."
               : "Welcome! Create an account and manage your passwords seamlessly."}

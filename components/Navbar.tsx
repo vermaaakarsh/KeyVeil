@@ -30,6 +30,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "./ui/form";
 import FormField from "./FormField";
+import Image from "next/image";
+import useLogo from "./customHooks/useLogo";
 
 const isCorrectPassword = async (password: string): Promise<boolean> => {
   try {
@@ -85,7 +87,10 @@ const updateUserPasswordFormSchema = () => {
 
 const Navbar = ({ user }: { user: TUser }) => {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const { setTheme } = useTheme();
+  const { keyVeilLogo } = useLogo();
+
   const formSchema = updateUserPasswordFormSchema();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -94,7 +99,6 @@ const Navbar = ({ user }: { user: TUser }) => {
       newPassword: "",
     },
   });
-  const [open, setOpen] = useState(false);
 
   const onPasswordUpdateSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -132,7 +136,9 @@ const Navbar = ({ user }: { user: TUser }) => {
 
   return (
     <nav className="flex justify-between items-center px-4 h-16 bg-background text-foreground">
-      <span className="pl-2 font-bold text-3xl">KeyVeil</span>
+      <span className="lg:px-4 md:px-4 px-1  pt-1">
+        <Image src={keyVeilLogo} alt="KeyVeil" width={180} />
+      </span>
       <div className="flex gap-1.5 justify-center items-center">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
