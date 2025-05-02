@@ -24,7 +24,7 @@ const passwordSchema = new schema(
       required: true,
     },
     password: {
-      type: String,
+      type: {},
       required: true,
     },
     category: {
