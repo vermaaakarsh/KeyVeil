@@ -21,6 +21,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import ConfirmationBox from "./ConfirmationBox";
 
 const Passwords = ({
   initialPasswords,
@@ -89,6 +90,19 @@ const Passwords = ({
     }
   };
 
+  const handlePasswordDelete = async (passwordId: string) => {
+    const response = await fetch(`/api/password/?passwordId=${passwordId}`, {
+      method: "Delete",
+    });
+    const { status, message }: ICustomResponse = await response.json();
+    if (status === "success") {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+    fetchPasswords();
+  };
+
   useEffect(() => {
     if (
       maxRecordsPerPageInput !== maxRecordsPerPage &&
@@ -103,29 +117,31 @@ const Passwords = ({
 
   return (
     <div className="flex flex-col m-6">
-      <section className="flex flex-col md:flex-row lg:flex-row justify-center items-center w-full gap-4 ">
-        <SearchBar setSearchBarValue={setSearchBarValue} />
-        <FilterDropdown
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-        />
-        <AddPassword fetchPasswords={fetchPasswords} />
-      </section>
-      <section className="flex justify-center items-center mt-5">
+      <section className="flex justify-center items-center">
         <Dialog open={open} onOpenChange={setOpen}>
-          <Button
-            variant="default"
-            onClick={() => {
-              if (vaultLocked) {
+          {vaultLocked ? (
+            <Button
+              variant="default"
+              onClick={() => {
                 setOpen(true);
-              } else {
+              }}
+            >
+              Unlock Vault
+            </Button>
+          ) : (
+            <ConfirmationBox
+              title="Are you sure you want to lock your vault?"
+              description={
+                "You will need to re-enter your Master Password to unlock again."
+              }
+              confirmationHandler={() => {
                 setVaultLocked(true);
                 setMasterPassword("");
-              }
-            }}
-          >
-            {vaultLocked ? "Unlock Vault" : "Lock Vault"}
-          </Button>
+              }}
+            >
+              <Button variant="default">Lock Vault</Button>
+            </ConfirmationBox>
+          )}
           <DialogContent className="mlr-15 backdrop-blur-sm">
             <DialogHeader>
               <DialogTitle>Enter your Master Password</DialogTitle>
@@ -185,7 +201,16 @@ const Passwords = ({
           </DialogContent>
         </Dialog>
       </section>
-      <section className="mt-10 ml-6.5 mr-6.5">
+      <section className="flex flex-col md:flex-row lg:flex-row justify-center items-center w-full gap-4 mt-8 ">
+        <SearchBar setSearchBarValue={setSearchBarValue} />
+        <FilterDropdown
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+        {!vaultLocked && <AddPassword fetchPasswords={fetchPasswords} />}
+      </section>
+
+      <section className="mt-5 ml-6.5 mr-6.5">
         <div className="flex flex-col md:flex-row lg:flex-row justify-center items-center md:items-baseline lg:items-baseline gap-6">
           <Pagination
             currentPage={currentPage}
@@ -217,9 +242,18 @@ const Passwords = ({
             passwords.map((passwordData) => (
               <PasswordItem
                 key={passwordData._id + passwordData.name}
-                passwordData={passwordData}
+                passwordData={{
+                  _id: passwordData._id?.toString() ?? "",
+                  name: passwordData.name,
+                  username: passwordData.username,
+                  url: passwordData.url,
+                  password: passwordData.password,
+                  passwordLastUpdated: passwordData.passwordLastUpdated,
+                  category: passwordData.category,
+                }}
                 vaultLocked={vaultLocked}
                 masterPassword={masterPassword}
+                handlePasswordDelete={handlePasswordDelete}
               />
             ))
           ) : (
