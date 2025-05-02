@@ -19,13 +19,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import FormField from "./FormField";
 import { useRouter } from "next/navigation";
-
-const checkPasswordValidation = (): // password: string,
-// name: string | undefined
-boolean => {
-  // TODO: Implement proper validation
-  return true;
-};
+import { checkPasswordValidation } from "@/lib/utils";
 
 const authFormSchema = (type: TAuthForm) => {
   return z
@@ -75,22 +69,9 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (type === "sign-up") {
-        const response = await fetch("/api/sign-up", {
-          method: "POST",
-          body: JSON.stringify({
-            name: values.name,
-            email: values.email,
-            password: values.password,
-          }),
-        });
-        const { status, message }: ICustomResponse = await response.json();
-        if (status === "success") {
-          form.reset();
-          router.push("/sign-in");
-          toast.success(message);
-        } else {
-          toast.error(message);
-        }
+        router.push(
+          `generate-master-password?name=${values.name}&email=${values.email}&password=${values.password}`
+        );
       } else {
         const response = await fetch("/api/sign-in", {
           method: "POST",
@@ -120,7 +101,9 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
     <div className="flex justify-center mt-16">
       <Card className="lg:w-[566px]">
         <CardHeader>
-          <CardTitle className="flex justify-center">KeyVeil</CardTitle>
+          <CardTitle className="flex justify-center">
+            Key<span className="text-primary">Veil</span>
+          </CardTitle>
           <CardDescription className="flex justify-center">
             {isSignIn
               ? "Welcome back! Sign in to you account."
@@ -157,12 +140,19 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
                     <p>
                       Password should pass these checks:
                       <ul className="text-sm italic">
-                        <li>At least 12+ characters</li>
-                        <li>Contains uppercase characters (A-Z)</li>
-                        <li>Contains lowercase characters (a-z)</li>
-                        <li>Contains numbers (0-9)</li>
-                        <li>Contains symbols (!,@,#,$,%,^,&,*,etc)</li>
-                        <li>Is not a common password (abcde@123456)</li>
+                        <li>- At least 12+ characters</li>
+                        <li>- Contains uppercase characters (A-Z)</li>
+                        <li>- Contains lowercase characters (a-z)</li>
+                        <li>- Contains numbers (0-9)</li>
+                        <li>- Contains symbols (!,@,#,$,%,^,&,*,etc)</li>
+                        <li className="pt-1">
+                          Note:{" "}
+                          <span className="text-primary">This password is</span>{" "}
+                          platform's password,{" "}
+                          <span className="text-primary">
+                            not your master password
+                          </span>
+                        </li>
                       </ul>
                     </p>
                   )
