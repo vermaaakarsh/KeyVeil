@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<img src="./public/keyveil-logo-light.png" width="200"> is a secure password manager. It allows users to generate a master password (which is stored only by them), which then is used to securely lock and unlock their vault containing all other passwords.
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the project
 
 ```bash
-npm run dev
+git clone git@github.com:vermaaakarsh/KeyVeil.git
 # or
-yarn dev
-# or
-pnpm dev
-# or
+git clone https://github.com/vermaaakarsh/KeyVeil.git
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install the dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Run the development server
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. You can start editing the project as per you need.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Want to contribute?
 
-## Deploy on Vercel
+Future prospects:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Browser extension of the app.
+- Auto filling details on the stored sites.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Steps to follow:
+
+1. Fork the project
+
+2. Follow the steps (listed above) to install the project.
+
+3. Add a functionality.
+
+4. Create Pull Request with the description of the functionality and snapshots of the frontend.
+
+Note: If the functionality is useful and the project code structured is maintained will all the requested changes resolved, then only code will be merged.
+
+## Have any query?
+
+Feel free to connect me on [LinkedIn](https://www.linkedin.com/in/aakarshverma/)
