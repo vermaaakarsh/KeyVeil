@@ -31,7 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "./ui/form";
 import FormField from "./FormField";
 import Image from "next/image";
-import useLogo from "./customHooks/useLogo";
+import useLogo from "../lib/customHooks/useLogo";
 
 const isCorrectPassword = async (password: string): Promise<boolean> => {
   try {

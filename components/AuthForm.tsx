@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import FormField from "./FormField";
 import { useRouter } from "next/navigation";
 import { checkPasswordValidation } from "@/lib/utils";
-import useLogo from "./customHooks/useLogo";
+import useLogo from "../lib/customHooks/useLogo";
 import Image from "next/image";
 
 const authFormSchema = (type: TAuthForm) => {
