@@ -16,8 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "KeyVeil",
-  description:
-    "Save and protect your passwords so that you never have to remember them",
+  description: "Save and manage all your passwords securely at one place.",
+  applicationName: "KeyVeil",
+  creator: "Aakarsh Verma",
+  keywords: ["password", "manager", "cyber-security"],
 };
 
 export default function AppLayout({
