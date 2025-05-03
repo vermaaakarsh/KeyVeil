@@ -102,7 +102,13 @@ const GenerateMasterPassword = () => {
                     disabled
                   />
                 </div>
-                <Button variant="outline" onClick={generateRandomPassword}>
+                <Button
+                  variant="outline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    generateRandomPassword();
+                  }}
+                >
                   Generate
                 </Button>
                 <a hidden={true} ref={refExport}>
