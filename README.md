@@ -1,5 +1,7 @@
 <img src="./public/keyveil-logo-light.png" width="200"> is a secure password manager. It allows users to generate a master password (which is stored only by them), which then is used to securely lock and unlock their vault containing all other passwords.
 
+Visit project : [https://key-veil.vercel.app]()
+
 ## Getting Started
 
 1. Clone the project
@@ -8,7 +10,6 @@
 git clone git@github.com:vermaaakarsh/KeyVeil.git
 # or
 git clone https://github.com/vermaaakarsh/KeyVeil.git
-bun dev
 ```
 
 2. Install the dependencies
