@@ -154,7 +154,7 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
                         <li className="pt-1">
                           Note:{" "}
                           <span className="text-primary">This password is</span>{" "}
-                          platform's password,{" "}
+                          platform&apos;s password,{" "}
                           <span className="text-primary">
                             not your master password
                           </span>

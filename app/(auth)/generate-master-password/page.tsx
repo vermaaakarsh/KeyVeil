@@ -12,7 +12,6 @@ import { Form } from "@/components/ui/form";
 import FormField from "@/components/FormField";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import { checkPasswordValidation } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,8 +38,7 @@ const GenerateMasterPassword = () => {
     },
   });
 
-  const generateRandomPassword = (e: any) => {
-    e.preventDefault();
+  const generateRandomPassword = () => {
     const masterPassword = generateRandomUniquePassword();
     form.setValue("masterPassword", masterPassword);
   };

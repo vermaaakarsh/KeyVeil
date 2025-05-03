@@ -117,5 +117,5 @@ const deletePassword = async (request: NextRequest) => {
 };
 
 export const POST = withAuth(addPassword);
-export const UPDATE = withAuth(updatePassword);
+export const PUT = withAuth(updatePassword);
 export const DELETE = withAuth(deletePassword);
