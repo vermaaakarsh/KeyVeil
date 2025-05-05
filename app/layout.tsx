@@ -19,7 +19,19 @@ export const metadata: Metadata = {
   description: "Save and manage all your passwords securely at one place.",
   applicationName: "KeyVeil",
   creator: "Aakarsh Verma",
-  keywords: ["password", "manager", "cyber-security"],
+  keywords: [
+    "KeyVeil",
+    "keyveil",
+    "key",
+    "veil",
+    "password",
+    "manager",
+    "cyber-security",
+  ],
+  icons: {
+    icon: "/icon",
+    apple: "/apple-icon",
+  },
 };
 
 export default function AppLayout({
