@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KeyVeil",
+  title: "",
   description: "Save and manage all your passwords securely at one place.",
   applicationName: "KeyVeil",
   creator: "Aakarsh Verma",
@@ -29,8 +29,14 @@ export const metadata: Metadata = {
     "cyber-security",
   ],
   icons: {
-    icon: "/icon",
-    apple: "/apple-icon",
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
+  openGraph: {
+    title: "KeyVeil",
+    description: "Save and manage all your passwords securely at one place.",
+    images: "/icon.png",
+    siteName: "KeyVeil",
   },
 };
 
