@@ -1,57 +1,69 @@
-import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { cookies } from 'next/headers';
 
-import User from "@/models/user";
-import connectDb from "@/lib/mongoose";
+import User from '@/models/user';
+import connectDb from '@/lib/mongoose';
 
-const signInUser = async (request: NextRequest) => {
+export async function POST(request: NextRequest) {
   try {
     await connectDb();
-    const cookieStore = await cookies();
+
     const userData = await request.json();
     const user = await User.findOne({ email: userData.email });
+
     if (!user) {
       return NextResponse.json({
-        status: "error",
-        message: "No account with this email address!",
+        status: 'error',
+        message: 'No account with this email address!',
         data: {},
       });
     }
-    const status = await bcrypt.compare(userData.password, user.password);
-    if (!status) {
+
+    const valid = await bcrypt.compare(userData.password, user.password);
+
+    if (!valid) {
       return NextResponse.json({
-        status: "error",
-        message: "Credentials Mismatched!",
+        status: 'error',
+        message: 'Credentials Mismatched!',
         data: {},
       });
     }
 
     const token = jwt.sign(
-      { userId: user._id },
-      `${user._id}${process.env.JWT_ENCRYPTION_SECRET_SALT}`,
+      { userId: user._id.toString() },
+      process.env.JWT_ENCRYPTION_SECRET_SALT!,
       {
-        algorithm: "HS256",
-        expiresIn: "1h",
-      }
+        algorithm: 'HS256',
+        expiresIn: '1h',
+      },
     );
-    cookieStore.set("token", token, {
+
+    const cookieStore = await cookies();
+
+    cookieStore.set('token', token, {
       expires: new Date(Date.now() + 60 * 60 * 1000),
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
     });
+
     return NextResponse.json({
-      status: "success",
-      message: "Signing in!",
+      status: 'success',
+      message: 'Signing in!',
       data: {},
     });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({
-      status: "error",
-      message: "Something went wrong while signing in.",
-      data: {},
-    });
-  }
-};
+    console.error(error);
 
-export const POST = signInUser;
+    return NextResponse.json(
+      {
+        status: 'error',
+        message: 'Something went wrong while signing in.',
+        data: {},
+      },
+      { status: 500 },
+    );
+  }
+}

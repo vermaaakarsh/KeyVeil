@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { CATEGORY_ENUM } from "@/lib/enums";
+} from '@/components/ui/dropdown-menu';
+import { CATEGORY_ENUM } from '@/lib/enums';
 
 const FilterDropdown = ({
   selectedCategory,
@@ -22,7 +22,7 @@ const FilterDropdown = ({
         <DropdownMenuTrigger asChild>
           <Button className="w-full" variant="outline" size="icon">
             <span className="p-1.5 block w-full truncate">
-              {selectedCategory ?? "All"}
+              {selectedCategory ?? 'All'}
             </span>
           </Button>
         </DropdownMenuTrigger>

@@ -1,36 +1,28 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-const publicRoutes = ["/sign-up", "/sign-in"];
-const protectedRoutes = ["/"];
+const publicRoutes = ['/sign-up', '/sign-in'];
+const protectedRoutes = ['/'];
 
-export default async function middleware(request: NextRequest) {
+export default function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
+
   const isProtectedRoute = protectedRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("Content-Type", "application/json");
+  const token = request.cookies.get('token')?.value;
 
   if (isProtectedRoute && !token) {
-    return NextResponse.redirect(new URL("/sign-in", request.nextUrl));
-  }
-  if (isPublicRoute && token && request.nextUrl.pathname.startsWith("/sign")) {
-    return NextResponse.redirect(new URL("/", request.nextUrl));
+    return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  if (isPublicRoute && token && path.startsWith('/sign')) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
 };

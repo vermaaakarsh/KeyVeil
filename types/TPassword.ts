@@ -1,10 +1,9 @@
-import { CATEGORY_ENUM } from "@/lib/enums";
-import { TEncryptedDataObject } from "@/services/cryptography/ICryptography";
-import { Types } from "mongoose";
+import { CATEGORY_ENUM } from '@/lib/enums';
+import { TEncryptedDataObject } from '@/services/cryptography/ICryptography';
 
 export type TPassword = {
-  _id?: Types.ObjectId;
-  userId: Types.ObjectId;
+  _id: string;
+  userId: string;
   name: string;
   username: string;
   url: string;

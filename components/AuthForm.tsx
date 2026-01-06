@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import React from "react";
 import {
   Card,
   CardContent,
@@ -8,50 +7,50 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/components/ui/form";
-import Link from "next/link";
-import { toast } from "sonner";
-import FormField from "./FormField";
-import { useRouter } from "next/navigation";
-import { checkPasswordValidation } from "@/lib/utils";
-import useLogo from "../lib/customHooks/useLogo";
-import Image from "next/image";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form } from '@/components/ui/form';
+import Link from 'next/link';
+import { toast } from 'sonner';
+import FormField from './FormField';
+import { useRouter } from 'next/navigation';
+import { checkPasswordValidation } from '@/lib/utils';
+import useLogo from '../lib/customHooks/useLogo';
+import Image from 'next/image';
 
 const authFormSchema = (type: TAuthForm) => {
   return z
     .object({
-      name: type === "sign-up" ? z.string().min(3) : z.string().optional(),
+      name: type === 'sign-up' ? z.string().min(3) : z.string().optional(),
       email: z.string().email(),
       password: z
         .string()
         .min(12)
         .regex(
-          /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]+/
+          /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]+/,
         ),
       confirmPassword:
-        type === "sign-up" ? z.string().min(12) : z.string().optional(),
+        type === 'sign-up' ? z.string().min(12) : z.string().optional(),
     })
     .refine(
       () => {
         return checkPasswordValidation();
       },
       {
-        message: "Password does not passes the checks. ",
-        path: ["password"],
-      }
+        message: 'Password does not passes the checks. ',
+        path: ['password'],
+      },
     )
     .refine(
       (data) => !data.confirmPassword || data.confirmPassword === data.password,
       {
-        message: "Passwords do not match.",
-        path: ["confirmPassword"],
-      }
+        message: 'Passwords do not match.',
+        path: ['confirmPassword'],
+      },
     );
 };
 
@@ -63,31 +62,31 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      if (type === "sign-up") {
+      if (type === 'sign-up') {
         router.push(
-          `generate-master-password?name=${values.name}&email=${values.email}&password=${values.password}`
+          `generate-master-password?name=${values.name}&email=${values.email}&password=${values.password}`,
         );
       } else {
-        const response = await fetch("/api/sign-in", {
-          method: "POST",
+        const response = await fetch('/api/sign-in', {
+          method: 'POST',
           body: JSON.stringify({
             email: values.email,
             password: values.password,
           }),
         });
         const { status, message }: ICustomResponse = await response.json();
-        if (status === "success") {
+        if (status === 'success') {
           form.reset();
-          router.push("/");
+          router.push('/');
           toast.success(message);
         } else {
           toast.error(message);
@@ -95,11 +94,11 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong!");
+      toast.error('Something went wrong!');
     }
   }
 
-  const isSignIn = type === "sign-in";
+  const isSignIn = type === 'sign-in';
 
   return (
     <div className="flex justify-center mt-16">
@@ -112,8 +111,8 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
           </CardTitle>
           <CardDescription className="flex justify-center items-center">
             {isSignIn
-              ? "Welcome back! Sign in to you account."
-              : "Welcome! Create an account and manage your passwords seamlessly."}
+              ? 'Welcome back! Sign in to you account.'
+              : 'Welcome! Create an account and manage your passwords seamlessly.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -144,17 +143,17 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
                 infoBox={
                   !isSignIn && (
                     <p>
-                      Password should pass these checks:
+                      Password should contain at least:
                       <ul className="text-sm italic">
-                        <li>- At least 12+ characters</li>
-                        <li>- Contains uppercase characters (A-Z)</li>
-                        <li>- Contains lowercase characters (a-z)</li>
-                        <li>- Contains numbers (0-9)</li>
-                        <li>- Contains symbols (!,@,#,$,%,^,&,*,etc)</li>
+                        <li>- 12+ characters</li>
+                        <li>- An uppercase character (A-Z)</li>
+                        <li>- A lowercase character (a-z)</li>
+                        <li>- A number (0-9)</li>
+                        <li>- A symbol (!,@,#,$,%,^,&,*,etc)</li>
                         <li className="pt-1">
-                          Note:{" "}
-                          <span className="text-primary">This password is</span>{" "}
-                          platform&apos;s password,{" "}
+                          Note:{' '}
+                          <span className="text-primary">This password is</span>{' '}
+                          platform&apos;s password,{' '}
                           <span className="text-primary">
                             not your master password
                           </span>
@@ -174,7 +173,7 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
                 />
               )}
               <Button className="w-full" type="submit">
-                {isSignIn ? "Sign In" : "Sign Up"}
+                {isSignIn ? 'Sign In' : 'Sign Up'}
               </Button>
             </form>
           </Form>
@@ -187,8 +186,8 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
                 ? `Don't have an account yet?`
                 : ` Already have an account?`}
             </span>
-            <Link href={isSignIn ? "/sign-up" : "/sign-in"}>
-              {isSignIn ? "Sign Up" : "Sign In"}
+            <Link href={isSignIn ? '/sign-up' : '/sign-in'}>
+              {isSignIn ? 'Sign Up' : 'Sign In'}
             </Link>
           </div>
         </CardFooter>

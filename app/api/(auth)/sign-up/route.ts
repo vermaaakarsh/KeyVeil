@@ -1,34 +1,48 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
+import { NextRequest, NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
 
-import User from "@/models/user";
-import connectDb from "@/lib/mongoose";
+import User from '@/models/user';
+import connectDb from '@/lib/mongoose';
 
-const signUpUser = async (request: NextRequest) => {
+export async function POST(request: NextRequest) {
   try {
     await connectDb();
 
-    const userObject = await request.json();
-    const encryptedPassword = await bcrypt.hash(userObject.password, 12);
+    const { name, email, password } = await request.json();
+
+    if (!name || !email || !password) {
+      return NextResponse.json(
+        {
+          status: 'error',
+          message: 'Name, email, and password are required.',
+          data: {},
+        },
+        { status: 400 },
+      );
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 12);
+
     const user = new User({
-      name: userObject.name,
-      email: userObject.email,
+      name: name,
+      email: email,
       password: encryptedPassword,
     });
+
     await user.save();
+
     return NextResponse.json({
-      status: "success",
-      message: "Account created successfully! Please sign in to proceed.",
+      status: 'success',
+      message: 'Account created successfully! Please sign in to proceed.',
       data: {},
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+
     return NextResponse.json({
-      status: "error",
-      message: "Something went wrong while creating your account.",
+      status: 'error',
+      message: 'Something went wrong while creating your account.',
       data: {},
     });
   }
-};
-
-export const POST = signUpUser;
+}

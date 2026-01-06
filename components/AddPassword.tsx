@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
+import React, { useState } from 'react';
+import { Button } from './ui/button';
+import { Label } from './ui/label';
 import {
   Dialog,
   DialogContent,
@@ -10,24 +10,24 @@ import {
   DialogTitle,
   DialogFooter,
   DialogTrigger,
-} from "./ui/dialog";
+} from './ui/dialog';
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "./ui/select";
-import { CATEGORY_ENUM } from "@/lib/enums";
-import { toast } from "sonner";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "./ui/form";
-import FormField from "./FormField";
-import { Eye, EyeOff } from "lucide-react";
-import { Input } from "./ui/input";
-import { encryptPassword } from "@/lib/password";
+} from './ui/select';
+import { CATEGORY_ENUM } from '@/lib/enums';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form } from './ui/form';
+import FormField from './FormField';
+import { Eye, EyeOff } from 'lucide-react';
+import { Input } from './ui/input';
+import { encryptPassword } from '@/lib/password';
 
 const addPasswordFormSchema = () => {
   return z
@@ -41,12 +41,12 @@ const addPasswordFormSchema = () => {
     .refine(
       (data) =>
         Object.values(CATEGORY_ENUM).includes(
-          data.category as unknown as CATEGORY_ENUM
+          data.category as unknown as CATEGORY_ENUM,
         ),
       {
-        message: "Invalid category!",
-        path: ["category"],
-      }
+        message: 'Invalid category!',
+        path: ['category'],
+      },
     );
 };
 
@@ -61,17 +61,17 @@ const AddPassword = ({
   const [showMasterPassword, setShowMasterPassword] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState(
-    CATEGORY_ENUM.personal
+    CATEGORY_ENUM.personal,
   );
 
   const formSchema = addPasswordFormSchema();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      platformName: "",
-      platformUsername: "",
-      platformUrl: "",
-      platformPassword: "",
+      platformName: '',
+      platformUsername: '',
+      platformUrl: '',
+      platformPassword: '',
       category: CATEGORY_ENUM.personal,
     },
   });
@@ -84,7 +84,7 @@ const AddPassword = ({
     try {
       const encryptedPassword = await encryptPassword(
         values.platformPassword,
-        masterPassword
+        masterPassword,
       );
       console.log(encryptPassword);
       const passwordObject = {
@@ -94,12 +94,12 @@ const AddPassword = ({
         password: encryptedPassword,
         category: selectedCategory,
       };
-      const response = await fetch("/api/password", {
-        method: "POST",
+      const response = await fetch('/api/password', {
+        method: 'POST',
         body: JSON.stringify(passwordObject),
       });
       const { status, message }: ICustomResponse = await response.json();
-      if (status === "success") {
+      if (status === 'success') {
         toast.success(message);
         form.reset();
         setOpen(false);
@@ -109,7 +109,7 @@ const AddPassword = ({
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong!");
+      toast.error('Something went wrong!');
     }
   };
 
@@ -159,8 +159,8 @@ const AddPassword = ({
                     Object.keys(CATEGORY_ENUM).find(
                       (key) =>
                         CATEGORY_ENUM[key as keyof typeof CATEGORY_ENUM] ===
-                        selectedCategory
-                    ) ?? ""
+                        selectedCategory,
+                    ) ?? ''
                   }
                 >
                   <SelectTrigger>
@@ -187,9 +187,9 @@ const AddPassword = ({
                       name="masterPassword"
                       placeholder="Enter your master password"
                       value={masterPassword}
-                      type={showMasterPassword ? "text" : "password"}
+                      type={showMasterPassword ? 'text' : 'password'}
                       required
-                      autoComplete={"new-password"}
+                      autoComplete={'new-password'}
                       disabled
                     />
                     <Button

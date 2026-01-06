@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function Pagination({
   currentPage,
@@ -23,7 +23,7 @@ export default function Pagination({
     pages.push(1);
 
     if (currentPage > maxVisiblePages + 2) {
-      pages.push("...");
+      pages.push('...');
     }
     for (
       let i = Math.max(2, currentPage - maxVisiblePages);
@@ -33,7 +33,7 @@ export default function Pagination({
       pages.push(i);
     }
     if (currentPage < totalPages - maxVisiblePages - 1) {
-      pages.push("...");
+      pages.push('...');
     }
 
     pages.push(totalPages);
@@ -52,20 +52,20 @@ export default function Pagination({
       </Button>
 
       {getPageNumbers().map((page, index) =>
-        typeof page === "number" ? (
+        typeof page === 'number' ? (
           <Button
             key={page}
-            variant={currentPage === page ? "default" : "outline"}
-            className={cn("px-3", currentPage === page && "font-bold")}
+            variant={currentPage === page ? 'default' : 'outline'}
+            className={cn('px-3', currentPage === page && 'font-bold')}
             onClick={() => pageChangeHandler(page)}
           >
             {page}
           </Button>
         ) : (
-          <span key={index + "page"} className="px-2 text-muted-foreground">
+          <span key={index + 'page'} className="px-2 text-muted-foreground">
             {page}
           </span>
-        )
+        ),
       )}
 
       <Button

@@ -1,6 +1,6 @@
-import { CATEGORY_ENUM } from "@/lib/enums";
-import { TPassword } from "@/types/TPassword";
-import mongoose from "mongoose";
+import { CATEGORY_ENUM } from '@/lib/enums';
+import { TPassword } from '@/types/TPassword';
+import mongoose from 'mongoose';
 
 const schema = mongoose.Schema;
 
@@ -8,7 +8,7 @@ const passwordSchema = new schema(
   {
     userId: {
       type: schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     name: {
@@ -45,11 +45,11 @@ const passwordSchema = new schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Password =
   mongoose.models?.Password ??
-  mongoose.model<TPassword>("Password", passwordSchema);
+  mongoose.model<TPassword>('Password', passwordSchema);
 
 export default Password;
