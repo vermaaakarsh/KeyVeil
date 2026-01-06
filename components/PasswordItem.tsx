@@ -1,32 +1,23 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import copy from "copy-to-clipboard";
+import copy from 'copy-to-clipboard';
+import { toast } from 'sonner';
+import { Clipboard, Trash2 } from 'lucide-react';
+
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
-import { TEncryptedDataObject } from "@/services/cryptography/ICryptography";
-import { decryptPassword } from "@/lib/password";
-import { Clipboard, Trash2 } from "lucide-react";
-import ConfirmationBox from "./ConfirmationBox";
-import { toast } from "sonner";
+} from '@/components/ui/card';
+import ConfirmationBox from './ConfirmationBox';
+import { decryptPassword } from '@/lib/password';
+import { TEncryptedDataObject } from '@/services/cryptography/ICryptography';
 
-const PasswordItem = ({
-  passwordData,
-  vaultLocked,
-  masterPassword,
-  handlePasswordDelete,
-}: {
+const MASKED_PASSWORD = '••••••••••••••••';
+
+interface PasswordItemProps {
   passwordData: {
     _id: string;
     name: string;
@@ -34,98 +25,74 @@ const PasswordItem = ({
     url: string;
     password: TEncryptedDataObject;
     category: string;
-    passwordLastUpdated: Date;
+    daysAgo: number;
+    textColor: string;
   };
   vaultLocked: boolean;
   masterPassword: string;
   handlePasswordDelete: (passwordId: string) => void;
-}) => {
-  const [daysAgo, setDaysAgo] = useState(0);
-  const [textColor, setTextColor] = useState("text-muted-foreground");
-  const [passwordDisplay, setPasswordDisplay] = useState("*****************");
-  const calculateDifference = () => {
-    const timeDifference = Math.ceil(
-      (new Date().getTime() -
-        new Date(passwordData.passwordLastUpdated?.toString()).getTime()) /
-        (1000 * 60 * 60 * 24)
+}
+
+const PasswordItem = ({
+  passwordData,
+  vaultLocked,
+  masterPassword,
+  handlePasswordDelete,
+}: PasswordItemProps) => {
+  const handleRevealAndCopy = async () => {
+    if (vaultLocked) return;
+
+    const decrypted = await decryptPassword(
+      passwordData.password,
+      masterPassword,
     );
-    if (timeDifference > 180) {
-      setTextColor("text-red-600");
-    } else if (timeDifference < 180 && timeDifference > 120) {
-      setTextColor("text-amber-300");
-    }
 
-    setDaysAgo(timeDifference > 0 ? timeDifference : 0);
+    copy(decrypted);
+    toast.success('Password copied!');
   };
-
-  const handleCopyToClipboard = () => {
-    copy(passwordDisplay);
-    toast.success("Password copied to Clipboard!");
-  };
-
-  const handlePasswordDisplay = async () => {
-    if (vaultLocked) {
-      setPasswordDisplay("*****************");
-    } else {
-      const temp = await decryptPassword(passwordData.password, masterPassword);
-      setPasswordDisplay(temp);
-    }
-  };
-
-  useEffect(() => {
-    handlePasswordDisplay();
-  }, [vaultLocked]);
-
-  useEffect(() => {
-    calculateDifference();
-  }, []);
 
   return (
-    <Card className="w-[350px] overflow-auto border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground hover:border-primary dark:bg-input/30 dark:hover:bg-input/50">
+    <Card className="w-[350px]">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>{passwordData.name}</CardTitle>
+
           {!vaultLocked && (
             <ConfirmationBox
-              title="Are you sure you want to delete this password?"
-              description={"This can not be undone!"}
-              confirmationHandler={() => {
-                handlePasswordDelete(passwordData._id);
-              }}
+              title="Delete password?"
+              description="This cannot be undone."
+              confirmationHandler={() => handlePasswordDelete(passwordData._id)}
             >
-              <Trash2 className="text-destructive cursor-pointer" />
+              <Trash2 className="cursor-pointer text-destructive" />
             </ConfirmationBox>
           )}
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <CardDescription className="truncate">
-                {passwordData.url}
-              </CardDescription>
-            </TooltipTrigger>
-            <TooltipContent>{passwordData.url}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <CardDescription className="text-primary font-bold mt-4">
-          {passwordData.username}
-          <div className="flex gap-0.5">
-            {passwordDisplay}
+
+        <CardDescription>{passwordData.url}</CardDescription>
+
+        <div className="mt-2">
+          <div>{passwordData.username}</div>
+          <div className="flex gap-2 items-center">
+            <span>{MASKED_PASSWORD}</span>
             {!vaultLocked && (
               <Clipboard
-                className="text-foreground cursor-pointer size-4"
-                onClick={handleCopyToClipboard}
+                className="cursor-pointer"
+                onClick={handleRevealAndCopy}
               />
             )}
           </div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-1 md:flex-row lg:flex-row text-sm justify-between  mt-[-4]">
-        <div className="text-muted-foreground">{passwordData.category}</div>
-        <div>
-          Updated{" "}
-          <span className={`${textColor} font-bold`}>{daysAgo} days</span> ago.
         </div>
+      </CardHeader>
+
+      <CardContent className="flex justify-between text-sm">
+        <span>{passwordData.category}</span>
+        <span>
+          Updated{' '}
+          <span className={`${passwordData.textColor} font-bold`}>
+            {passwordData.daysAgo} days
+          </span>{' '}
+          ago
+        </span>
       </CardContent>
     </Card>
   );

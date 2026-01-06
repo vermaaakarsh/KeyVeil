@@ -1,6 +1,6 @@
-import User from "@/models/user";
-import connectDb from "./mongoose";
-import Password from "@/models/password";
+import User from '@/models/user';
+import connectDb from './mongoose';
+import Password from '@/models/password';
 
 export async function getUserDetails(userId: string) {
   await connectDb();
@@ -26,7 +26,7 @@ export async function getUserPasswords(userId: string) {
   })
     .limit(12)
     .skip(0)
-    .sort([["name", "asc"]])
+    .sort([['name', 'asc']])
     .exec();
 
   const totalPages = Math.ceil(
@@ -34,7 +34,7 @@ export async function getUserPasswords(userId: string) {
       userId,
       isActive: true,
       isDeleted: false,
-    })) / 12
+    })) / 12,
   );
   return { passwords, totalPages };
 }

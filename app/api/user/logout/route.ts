@@ -1,27 +1,30 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
-import connectDb from "@/lib/mongoose";
-import { withAuth } from "@/lib/with-auth";
+import connectDb from '@/lib/mongoose';
 
-const logoutUser = async () => {
+export async function GET() {
   try {
     await connectDb();
+
     const cookieStore = await cookies();
-    cookieStore.delete("token");
+    cookieStore.delete('token');
+
     return NextResponse.json({
-      status: "success",
-      message: "Logging out!",
+      status: 'success',
+      message: 'Logging out!',
       data: {},
     });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({
-      status: "error",
-      message: "Something went wrong while logging out.",
-      data: {},
-    });
-  }
-};
+    console.error(error);
 
-export const GET = withAuth(logoutUser);
+    return NextResponse.json(
+      {
+        status: 'error',
+        message: 'Something went wrong while logging out.',
+        data: {},
+      },
+      { status: 500 },
+    );
+  }
+}

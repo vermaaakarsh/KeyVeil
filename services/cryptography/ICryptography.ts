@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 export type TNonceData = {
   nonceLength: number;
   nonce: string;
@@ -14,6 +12,6 @@ export interface ICryptography {
   encrypt(message: string, secretKey: string): Promise<TEncryptedDataObject>;
   decrypt(
     encryptedDataObject: TEncryptedDataObject,
-    secretKey: string
+    secretKey: string,
   ): Promise<string>;
 }

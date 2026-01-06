@@ -8,14 +8,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import React from "react";
+} from '@/components/ui/alert-dialog';
+import React from 'react';
 
 const ConfirmationBox = ({
   title,
   description,
-  cancelButtonText = "Cancel",
-  confirmButtonText = "Continue",
+  cancelButtonText = 'Cancel',
+  confirmButtonText = 'Continue',
   confirmationHandler,
   children,
 }: {
