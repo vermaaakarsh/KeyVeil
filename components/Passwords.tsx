@@ -273,15 +273,20 @@ const Passwords = ({ initialPasswords, initialTotalPages }: PasswordsProps) => {
 
         <div className="flex flex-wrap justify-center gap-4 mt-6">
           {passwords.length ? (
-            passwords.map((password) => (
-              <PasswordItem
-                key={password._id}
-                passwordData={password}
-                vaultLocked={vaultLocked}
-                masterPassword={masterPassword}
-                handlePasswordDelete={handlePasswordDelete}
-              />
-            ))
+            passwords
+              .filter(
+                (password) =>
+                  typeof password._id === 'string' && password._id.length > 0,
+              )
+              .map((password, index) => (
+                <PasswordItem
+                  key={password._id ?? `password-${index}`}
+                  passwordData={password}
+                  vaultLocked={vaultLocked}
+                  masterPassword={masterPassword}
+                  handlePasswordDelete={handlePasswordDelete}
+                />
+              ))
           ) : (
             <Card className="w-full">
               <CardHeader>
