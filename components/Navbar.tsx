@@ -143,6 +143,14 @@ const Navbar = ({ user }: { user: TUser }) => {
       toast.error(message);
     }
   };
+  const initials = (() => {
+    if (!user?.name) return 'U';
+
+    const parts = user.name.trim().split(' ');
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+
+    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+  })();
 
   return (
     <nav className="flex justify-between items-center px-4 h-16 bg-background text-foreground">
@@ -153,10 +161,7 @@ const Navbar = ({ user }: { user: TUser }) => {
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarFallback>
-                {user.name.split(' ')[0][0] +
-                  user.name.split(' ').slice(-1)[0][0]}
-              </AvatarFallback>
+              <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           </SheetTrigger>
           <SheetContent>

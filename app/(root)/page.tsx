@@ -1,15 +1,23 @@
 import Passwords from '@/components/Passwords';
-import { cookies } from 'next/headers';
-import { getUserDetails, getUserPasswords } from '@/lib/actions';
 import Navbar from '@/components/Navbar';
+import { getUserDetails, getUserPasswords } from '@/lib/actions';
+import { requireUserId } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export default async function Home() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
-  const { userId } = JSON.parse(atob(token!.split('.')[1]));
-  const user = JSON.parse(JSON.stringify(await getUserDetails(userId)));
-  const { passwords, totalPages } = JSON.parse(
-    JSON.stringify(await getUserPasswords(userId)),
+  let userId: string;
+
+  try {
+    const id = await requireUserId();
+    userId = id.toString();
+  } catch {
+    redirect('/sign-in');
+  }
+
+  const user = structuredClone(await getUserDetails(userId));
+
+  const { passwords, totalPages } = structuredClone(
+    await getUserPasswords(userId),
   );
 
   return (
