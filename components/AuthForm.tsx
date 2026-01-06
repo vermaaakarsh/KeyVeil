@@ -106,7 +106,13 @@ const AuthForm = ({ type }: { type: TAuthForm }) => {
         <CardHeader>
           <CardTitle className="flex justify-center items-center">
             <span className="">
-              <Image src={keyVeilLogo} alt="KeyVeil" width={250} />
+              <Image
+                src={keyVeilLogo}
+                alt="KeyVeil"
+                width={250}
+                className="w-full h-auto"
+                priority
+              />
             </span>
           </CardTitle>
           <CardDescription className="flex justify-center items-center">

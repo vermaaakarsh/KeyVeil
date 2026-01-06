@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: '',
+  title: 'KeyVeil',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? ''),
   description: 'Save and manage all your passwords securely at one place.',
   applicationName: 'KeyVeil',
   creator: 'Aakarsh Verma',

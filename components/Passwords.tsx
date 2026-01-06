@@ -278,9 +278,9 @@ const Passwords = ({ initialPasswords, initialTotalPages }: PasswordsProps) => {
                 (password) =>
                   typeof password._id === 'string' && password._id.length > 0,
               )
-              .map((password) => (
+              .map((password, index) => (
                 <PasswordItem
-                  key={password._id}
+                  key={password._id ?? `password-${index}`}
                   passwordData={password}
                   vaultLocked={vaultLocked}
                   masterPassword={masterPassword}

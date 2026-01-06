@@ -155,7 +155,13 @@ const Navbar = ({ user }: { user: TUser }) => {
   return (
     <nav className="flex justify-between items-center px-4 h-16 bg-background text-foreground">
       <span className="lg:px-4 md:px-4 px-1  pt-1">
-        <Image src={keyVeilLogo} alt="KeyVeil" width={180} />
+        <Image
+          src={keyVeilLogo}
+          alt="KeyVeil"
+          width={128}
+          className="w-full h-auto"
+          priority
+        />
       </span>
       <div className="flex gap-1.5 justify-center items-center">
         <Sheet open={open} onOpenChange={setOpen}>
