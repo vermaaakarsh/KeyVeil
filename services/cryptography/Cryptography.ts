@@ -1,11 +1,11 @@
-import nacl from "tweetnacl";
-import naclUtil from "tweetnacl-util";
+import nacl from 'tweetnacl';
+import naclUtil from 'tweetnacl-util';
 
 import {
   TEncryptedDataObject,
   TNonceData,
   ICryptography,
-} from "./ICryptography";
+} from './ICryptography';
 
 class Cryptography implements ICryptography {
   /**
@@ -40,7 +40,7 @@ class Cryptography implements ICryptography {
    */
   async encrypt(
     message: string,
-    secretKey: string
+    secretKey: string,
   ): Promise<TEncryptedDataObject> {
     const messageUint8 = naclUtil.decodeUTF8(message);
     const nonceData = this.getNonce();
@@ -49,10 +49,10 @@ class Cryptography implements ICryptography {
     const encryptedMessage = nacl.secretbox(
       messageUint8,
       nonceUint8Array,
-      secretKeyUint8Array
+      secretKeyUint8Array,
     );
     const fullMessage = new Uint8Array(
-      nonceUint8Array.length + encryptedMessage.length
+      nonceUint8Array.length + encryptedMessage.length,
     );
     fullMessage.set(nonceUint8Array);
     fullMessage.set(encryptedMessage, nonceData.nonceLength);
@@ -71,23 +71,23 @@ class Cryptography implements ICryptography {
    */
   async decrypt(
     encryptedDataObject: TEncryptedDataObject,
-    secretKey: string
+    secretKey: string,
   ): Promise<string> {
     const fullMessage = naclUtil.decodeBase64(
-      encryptedDataObject.encryptedData
+      encryptedDataObject.encryptedData,
     );
     const nonceUint8Array = naclUtil.decodeBase64(
-      encryptedDataObject.nonceData.nonce
+      encryptedDataObject.nonceData.nonce,
     );
     const secretKeyUint8Array = naclUtil.decodeBase64(secretKey);
 
     const decryptedMessage = nacl.secretbox.open(
       fullMessage.slice(encryptedDataObject.nonceData.nonceLength),
       nonceUint8Array,
-      secretKeyUint8Array
+      secretKeyUint8Array,
     );
     if (!decryptedMessage) {
-      throw new Error("Invalid data to decrypt");
+      throw new Error('Invalid data to decrypt');
     }
     return naclUtil.encodeUTF8(decryptedMessage);
   }

@@ -1,74 +1,97 @@
-"use client";
+'use client';
 
-import React, { useRef } from "react";
+import React, { useState } from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
-import FormField from "@/components/FormField";
-import { Button } from "@/components/ui/button";
-import { z } from "zod";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { exportPassword, generateRandomUniquePassword } from "@/lib/password";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@/components/ui/card';
+import { Form } from '@/components/ui/form';
+import FormField from '@/components/FormField';
+import { Button } from '@/components/ui/button';
+import { z } from 'zod';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+import { exportPassword, generateRandomUniquePassword } from '@/lib/password';
+import { Checkbox } from '@/components/ui/checkbox';
 
-const masterPasswordFormSchema = () => {
-  return z.object({
-    masterPassword: z.string().min(16),
-  });
-};
+/* =========================
+   Schema (defined once)
+========================= */
+const masterPasswordFormSchema = z.object({
+  masterPassword: z
+    .string()
+    .min(16, 'Master password must be at least 16 characters'),
+});
+
+type MasterPasswordFormValues = z.infer<typeof masterPasswordFormSchema>;
 
 const GenerateMasterPassword = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const refSubmitBtn = useRef<HTMLButtonElement>(null);
-  const refExport = useRef<HTMLAnchorElement>(null);
-  const formSchema = masterPasswordFormSchema();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [confirmed, setConfirmed] = useState(false);
+  const [passwordGenerated, setPasswordGenerated] = useState(false);
+
+  const form = useForm<MasterPasswordFormValues>({
+    resolver: zodResolver(masterPasswordFormSchema),
     defaultValues: {
-      masterPassword: "",
+      masterPassword: '',
     },
   });
 
+  /* =========================
+     Generate password
+  ========================= */
   const generateRandomPassword = () => {
     const masterPassword = generateRandomUniquePassword();
-    form.setValue("masterPassword", masterPassword);
+    form.setValue('masterPassword', masterPassword, {
+      shouldValidate: true,
+    });
+    setPasswordGenerated(true);
+    setConfirmed(false);
   };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    exportPassword(
-      refExport,
-      values.masterPassword,
-      `KeyVeil_MasterPass_${searchParams.get("name")?.split(" ").join("_")}`
-    );
+  /* =========================
+     Submit handler
+  ========================= */
+  async function onSubmit(values: MasterPasswordFormValues) {
+    if (!passwordGenerated) {
+      toast.error('Please generate a master password first.');
+      return;
+    }
+
     try {
-      const response = await fetch("/api/sign-up", {
-        method: "POST",
+      const response = await fetch('/api/sign-up', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          name: searchParams.get("name"),
-          email: searchParams.get("email"),
-          password: searchParams.get("password"),
+          name: searchParams.get('name'),
+          email: searchParams.get('email'),
+          password: searchParams.get('password'),
         }),
       });
-      const { status, message }: ICustomResponse = await response.json();
-      if (status === "success") {
-        toast.success(message);
-        router.push("/sign-in");
-        form.reset();
-      } else {
-        toast.error(message);
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        toast.error(result.message || 'Signup failed');
+        return;
       }
+
+      exportPassword(values.masterPassword, 'KeyVeil_Master_Password');
+
+      toast.success('Account created successfully');
+      form.reset();
+      router.push('/sign-in');
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong!");
+      console.error(error);
+      toast.error('Something went wrong!');
     }
   }
 
@@ -77,13 +100,13 @@ const GenerateMasterPassword = () => {
       <Card className="lg:w-[566px]">
         <CardHeader>
           <CardTitle className="flex justify-center">
-            Generate <span className="text-primary ml-2 mr-2"> Master </span>{" "}
-            Password
+            Generate <span className="text-primary mx-2">Master</span> Password
           </CardTitle>
           <CardDescription className="flex justify-center">
-            This password will not be stored by us.
+            This password is never stored. Save it securely.
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <Form {...form}>
             <form
@@ -91,57 +114,46 @@ const GenerateMasterPassword = () => {
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-8"
             >
+              {/* Password Field */}
               <div className="flex flex-col gap-2">
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="masterPassword"
-                    label=""
-                    type="password"
-                    showPasswordToggle
-                    disabled
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="masterPassword"
+                  type="password"
+                  label=""
+                  readOnly
+                  showPasswordToggle
+                />
+
                 <Button
+                  type="button"
                   variant="outline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    generateRandomPassword();
-                  }}
+                  onClick={generateRandomPassword}
                 >
                   Generate
                 </Button>
-                <a hidden={true} ref={refExport}>
-                  Download
-                </a>
               </div>
-              <div className="items-top flex space-x-2">
+
+              {/* Confirmation */}
+              <div className="flex items-start space-x-2">
                 <Checkbox
-                  id="terms1"
-                  onCheckedChange={(checkedStatus: boolean) => {
-                    if (refSubmitBtn.current) {
-                      refSubmitBtn.current.disabled = !checkedStatus;
-                    }
-                  }}
+                  id="confirm"
+                  disabled={!passwordGenerated}
+                  checked={confirmed}
+                  onCheckedChange={(checked) => setConfirmed(Boolean(checked))}
                 />
                 <div className="grid gap-1.5 leading-none">
-                  <label
-                    htmlFor="terms1"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
+                  <label htmlFor="confirm" className="text-sm font-medium">
                     Confirm this as your master password
                   </label>
                   <p className="text-sm text-muted-foreground">
-                    We do not store this password. Be sure to keep it secure.
+                    We cannot recover this password if lost.
                   </p>
                 </div>
               </div>
-              <Button
-                ref={refSubmitBtn}
-                className="w-full"
-                type="submit"
-                disabled
-              >
+
+              {/* Submit */}
+              <Button className="w-full" type="submit" disabled={!confirmed}>
                 Confirm Master Password
               </Button>
             </form>

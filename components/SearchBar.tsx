@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Search } from "lucide-react";
+import { Search } from 'lucide-react';
 
 const SearchBar = ({
   setSearchBarValue,

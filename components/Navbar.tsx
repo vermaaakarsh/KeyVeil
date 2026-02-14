@@ -1,56 +1,66 @@
-"use client";
+'use client';
 
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import ConfirmationBox from "./ConfirmationBox";
-import { TUser } from "@/types/TUser";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import ConfirmationBox from './ConfirmationBox';
+import { TUser } from '@/types/TUser';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { useState } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "./ui/form";
-import FormField from "./FormField";
-import Image from "next/image";
-import useLogo from "../lib/customHooks/useLogo";
+} from '@/components/ui/sheet';
+import { useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form } from './ui/form';
+import FormField from './FormField';
+import Image from 'next/image';
+import useLogo from '../lib/customHooks/useLogo';
+
+type CheckPasswordResponse = {
+  status: 'success' | 'error';
+  message: string;
+  data: { isCorrectPassword: boolean } | null;
+};
 
 const isCorrectPassword = async (password: string): Promise<boolean> => {
   try {
-    const response = await fetch("/api/user/password/check", {
-      method: "POST",
-      body: JSON.stringify({
-        password,
-      }),
+    const response = await fetch('/api/user/password/check', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
     });
-    const { status, message, data }: ICustomResponse = await response.json();
-    if (status === "success") {
-      return data.isCorrectPassword;
-    } else {
-      toast.error(message);
+
+    const result: CheckPasswordResponse = await response.json();
+
+    if (result.status === 'success' && result.data) {
+      return result.data.isCorrectPassword;
     }
+
+    toast.error(result.message);
   } catch (error) {
-    console.log(error);
-    toast.error("Something went wrong!");
+    console.error(error);
+    toast.error('Something went wrong!');
   }
+
   return false;
 };
 
@@ -62,24 +72,24 @@ const updateUserPasswordFormSchema = () => {
         .string()
         .min(12)
         .regex(
-          /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]+/
+          /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]+/,
         ),
     })
     .superRefine(async (data, ctx) => {
       const isValid = await isCorrectPassword(data.oldPassword);
       if (!isValid) {
         ctx.addIssue({
-          path: ["oldPassword"],
+          path: ['oldPassword'],
           code: z.ZodIssueCode.custom,
-          message: "Password is incorrect!",
+          message: 'Password is incorrect!',
         });
       }
 
       if (data.oldPassword === data.newPassword) {
         ctx.addIssue({
-          path: ["newPassword"],
+          path: ['newPassword'],
           code: z.ZodIssueCode.custom,
-          message: "New password must be different from old password!",
+          message: 'New password must be different from old password!',
         });
       }
     });
@@ -95,58 +105,69 @@ const Navbar = ({ user }: { user: TUser }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      oldPassword: "",
-      newPassword: "",
+      oldPassword: '',
+      newPassword: '',
     },
   });
 
   const onPasswordUpdateSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await fetch("/api/user/password", {
-        method: "PUT",
+      const response = await fetch('/api/user/password', {
+        method: 'PUT',
         body: JSON.stringify({ password: values.newPassword }),
       });
       const { status, message }: ICustomResponse = await response.json();
-      if (status === "success") {
+      if (status === 'success') {
         form.reset();
         toast.success(message);
         setOpen(false);
-        router.push("/sign-in");
+        router.push('/sign-in');
       } else {
         toast.error(message);
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong!");
+      toast.error('Something went wrong!');
     }
   };
 
   const logoutHandler = async () => {
-    const response = await fetch("/api/user/logout", {
-      method: "GET",
+    const response = await fetch('/api/user/logout', {
+      method: 'GET',
     });
     const { status, message }: ICustomResponse = await response.json();
-    if (status === "success") {
+    if (status === 'success') {
       toast.success(message);
-      router.push("/sign-in");
+      router.push('/sign-in');
     } else {
       toast.error(message);
     }
   };
+  const initials = (() => {
+    if (!user?.name) return 'U';
+
+    const parts = user.name.trim().split(' ');
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+
+    return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+  })();
 
   return (
     <nav className="flex justify-between items-center px-4 h-16 bg-background text-foreground">
       <span className="lg:px-4 md:px-4 px-1  pt-1">
-        <Image src={keyVeilLogo} alt="KeyVeil" width={180} />
+        <Image
+          src={keyVeilLogo}
+          alt="KeyVeil"
+          width={128}
+          className="w-full h-auto"
+          priority
+        />
       </span>
       <div className="flex gap-1.5 justify-center items-center">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarFallback>
-                {user.name.split(" ")[0][0] +
-                  user.name.split(" ").slice(-1)[0][0]}
-              </AvatarFallback>
+              <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           </SheetTrigger>
           <SheetContent>
@@ -205,10 +226,10 @@ const Navbar = ({ user }: { user: TUser }) => {
         </Sheet>
         <ConfirmationBox
           title="Are you sure you want to log out?"
-          description={"Any unsaved changes will be lost."}
+          description={'Any unsaved changes will be lost.'}
           confirmationHandler={logoutHandler}
         >
-          <Button variant={"outline"}>Logout</Button>
+          <Button variant={'outline'}>Logout</Button>
         </ConfirmationBox>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -219,13 +240,13 @@ const Navbar = ({ user }: { user: TUser }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
+            <DropdownMenuItem onClick={() => setTheme('light')}>
               Light
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
+            <DropdownMenuItem onClick={() => setTheme('dark')}>
               Dark
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
+            <DropdownMenuItem onClick={() => setTheme('system')}>
               System
             </DropdownMenuItem>
           </DropdownMenuContent>

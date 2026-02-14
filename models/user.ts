@@ -1,5 +1,5 @@
-import { TUser } from "@/types/TUser";
-import mongoose from "mongoose";
+import { TUser } from '@/types/TUser';
+import mongoose from 'mongoose';
 
 const schema = mongoose.Schema;
 
@@ -28,9 +28,9 @@ const userSchema = new schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const User = mongoose.models?.User ?? mongoose.model<TUser>("User", userSchema);
+const User = mongoose.models?.User ?? mongoose.model<TUser>('User', userSchema);
 
 export default User;
